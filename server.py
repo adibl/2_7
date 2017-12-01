@@ -11,7 +11,7 @@ PORT = 20003
 QUEUE_SIZE = 1
 MAX_PACKET = 2
 SHORT_SIZE = 2
-LEN_SIGN = 'H'
+LEN_SIGN = 'L' # 4 bytes, number between 0 to 4,194,304kb
 ANSWER = 'have a nice day'
 
 

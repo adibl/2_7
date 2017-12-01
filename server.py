@@ -15,9 +15,6 @@ SHORT_SIZE = 2
 ANSWER = ['have a nice day', "go"]
 
 
-
-
-
 def main():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -32,6 +29,7 @@ def main():
                     if request[0] == "Exit":
                         comm_socket.close()
                         break
+                    # add request to answer function call
                     is_work = protocol.send(comm_socket, request)
                     if not is_work:
                         comm_socket.close()

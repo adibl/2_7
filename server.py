@@ -5,14 +5,32 @@ socket server
 """
 import socket
 import struct
+import protocol
 
 IP = '0.0.0.0'
 PORT = 20003
 QUEUE_SIZE = 1
 MAX_PACKET = 2
 SHORT_SIZE = 2
-LEN_SIGN = 'L' # 4 bytes, number between 0 to 4,194,304kb
+LEN_SIGN = 'L' # 4 bytes, number between 0 to 4Mkb
 ANSWER = 'have a nice day'
+
+
+def send(my_socket, massage):
+    """
+    send massage
+    :param:my_socket: the communication socket.
+    :param:massage: the massage that hte program send.
+    :return: return None if the action seceded.
+    if not return the error string.
+    """
+    packet_len = socket.htons(len(massage))
+    err = my_socket.sendall(struct.pack(LEN_SIGN, packet_len))
+    if not err is None:
+        return err
+    err = my_socket.sendall(massage)
+    if not err is None:
+        return err
 
 
 def main():
@@ -27,14 +45,7 @@ def main():
                 if comm_socket.recv(MAX_PACKET) != '':
                     # we don't care what the client sent us
                     # send the length of the message
-                    packet_len = socket.htons(len(ANSWER))
-                    sent = 0
-                    while sent < SHORT_SIZE:
-                        sent += comm_socket.send(struct.pack(LEN_SIGN, packet_len)[sent:])
-                    # send the message
-                    sent = 0
-                    while sent < len(ANSWER):
-                        sent += comm_socket.send(ANSWER[sent:])
+                    send(comm_socket, ANSWER)
             except socket.error as msg:
                 print 'client socket disconnected- ' + str(msg)
             finally:

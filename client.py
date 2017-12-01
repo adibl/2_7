@@ -1,17 +1,18 @@
 """
-author - cyber
+author - adi bleyer
 date   - 29/11/17
 socket client
 """
 import socket
 import struct
+import protocol
 from gio._gio import network_address_parse
 
 SERVER_IP = '127.0.0.1'
 SERVER_PORT = 20003
 MESSAGE = 'hi'
-HEADER_LEN = 2
-LEN_SIGN = 'H'
+HEADER_LEN = 4
+LEN_SIGN = 'L'
 
 
 def main():

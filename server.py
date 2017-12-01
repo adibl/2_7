@@ -12,25 +12,10 @@ PORT = 20003
 QUEUE_SIZE = 1
 MAX_PACKET = 2
 SHORT_SIZE = 2
-LEN_SIGN = 'L' # 4 bytes, number between 0 to 4Mkb
 ANSWER = 'have a nice day'
 
 
-def send(my_socket, massage):
-    """
-    send massage
-    :param:my_socket: the communication socket.
-    :param:massage: the massage that hte program send.
-    :return: return None if the action seceded.
-    if not return the error string.
-    """
-    packet_len = socket.htons(len(massage))
-    err = my_socket.sendall(struct.pack(LEN_SIGN, packet_len))
-    if not err is None:
-        return err
-    err = my_socket.sendall(massage)
-    if not err is None:
-        return err
+
 
 
 def main():
@@ -41,15 +26,19 @@ def main():
         # endless loop to receive client after client
         while True:
             comm_socket, client_address = server_socket.accept()
-            try:
-                if comm_socket.recv(MAX_PACKET) != '':
-                    # we don't care what the client sent us
-                    # send the length of the message
-                    send(comm_socket, ANSWER)
-            except socket.error as msg:
-                print 'client socket disconnected- ' + str(msg)
-            finally:
-                comm_socket.close()
+            while True:
+                try:
+                    if comm_socket.recv(MAX_PACKET) != '':
+                        # we don't care what the client sent us
+                        # send the length of the message
+                        is_work = protocol.send(comm_socket, ANSWER)
+                        if not is_work:
+                            comm_socket.close()
+                            break
+                except socket.error as msg:
+                    print 'client socket disconnected- ' + str(msg)
+                    comm_socket.close()
+                    break
     except socket.error as msg:
         print 'failed to open server socket - ' + str(msg)
     finally:

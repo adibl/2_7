@@ -9,7 +9,7 @@ import protocol
 
 SERVER_IP = '127.0.0.1'
 SERVER_PORT = 20003
-MESSAGE = 'hi'
+MESSAGE = ['hi', "by"]
 
 
 
@@ -19,10 +19,16 @@ def main():
     try:
         client_socket.connect((SERVER_IP, SERVER_PORT))
         # send the message
-        protocol.send(client_socket, MESSAGE)
-
-        packet = protocol.recev(client_socket)
-        print packet
+        while True:
+            massage = []
+            massage.append(raw_input("enter action"))
+            massage.append(raw_input("enter action"))
+            protocol.send(client_socket, massage)
+            if massage[0] == "Exit":
+                break
+            packet = []
+            packet = protocol.recv(client_socket)
+            print packet[0]+" "+packet[1]
     except socket.error as msg:
         print 'error in communication with server - ' + str(msg)
     finally:

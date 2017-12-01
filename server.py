@@ -12,7 +12,7 @@ PORT = 20003
 QUEUE_SIZE = 1
 MAX_PACKET = 2
 SHORT_SIZE = 2
-ANSWER = 'have a nice day'
+ANSWER = ['have a nice day', "go"]
 
 
 
@@ -28,13 +28,14 @@ def main():
             comm_socket, client_address = server_socket.accept()
             while True:
                 try:
-                    if comm_socket.recv(MAX_PACKET) != '':
-                        # we don't care what the client sent us
-                        # send the length of the message
-                        is_work = protocol.send(comm_socket, ANSWER)
-                        if not is_work:
-                            comm_socket.close()
-                            break
+                    request = protocol.recv(comm_socket)
+                    if request[0] == "Exit":
+                        comm_socket.close()
+                        break
+                    is_work = protocol.send(comm_socket, request)
+                    if not is_work:
+                        comm_socket.close()
+                        break
                 except socket.error as msg:
                     print 'client socket disconnected- ' + str(msg)
                     comm_socket.close()
